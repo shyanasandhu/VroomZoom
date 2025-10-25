@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class CarMovement : MonoBehaviour
 {
@@ -38,6 +40,12 @@ public class CarMovement : MonoBehaviour
 
     [SerializeField] private float maxSAngle;
 
+
+    public GameObject SF;
+    public int count = 0;
+    public float delay = 5;
+    public Timer timer;
+    private bool lapT = false;
 
 
 
@@ -102,4 +110,32 @@ public class CarMovement : MonoBehaviour
         wTransform.rotation = rotate;
 
     }
+
+        void OnTriggerEnter(Collider other){
+            if(other.CompareTag("SFLine") && !lapT){
+                count++;
+                timer.recordTime();
+                lapT = true;
+
+                if(count < 5 ){
+                    timer.sTimer();
+                }else if(count == 5){
+                    StartCoroutine(RunEnd(delay));
+                    timer.endL();
+                }
+
+                //timer.rTime();
+        
+            }
+        }
+
+        void OnTriggerExit(Collider other){
+            if(other.CompareTag("SFLine")){
+                lapT = false;
+            }
+        }
+        IEnumerator RunEnd(float delay){
+            yield return new WaitForSeconds(delay);
+            SceneManager.LoadScene("LapTimes");
+        }
 }
