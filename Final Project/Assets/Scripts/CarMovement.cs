@@ -2,56 +2,104 @@ using UnityEngine;
 
 public class CarMovement : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    //Horizontal position
+    private float h;
+    private const string HORIZONTAL = "Horizontal";
+
+    //Vertical position
+    private float v;
+    private const string VERTICAL = "Vertical";
+
+    //Is player currently breaking
+    private bool breaking;
+
+    //Calling wheel colliders
+    [SerializeField] private WheelCollider frontLWCollider;
+    [SerializeField] private WheelCollider frontRWCollider;
+    [SerializeField] private WheelCollider backLWCollider;
+    [SerializeField] private WheelCollider backRWCollider;
+
+    //Calling wheels
+    [SerializeField] private Transform frontLWTransform;
+    [SerializeField] private Transform frontRWTransform;
+    [SerializeField] private Transform backLWTransform;
+    [SerializeField] private Transform backRWTransform;
+
+
+    //Force
+    [SerializeField] private float mForce;
+    [SerializeField] private float bForce;
+    
+    //Float vals
+    private float breakingF;
+    private float sAngle;
+    private float currSAngle;
+
+
+    [SerializeField] private float maxSAngle;
+
+
+
+
+    private void FixedUpdate()
     {
-        
+        gInput();
+        motor();
+        steering();
+        wheels();
     }
 
-    public float delay = 3;
-    public Transform camPosition;
-    Vector3 moveDir;
+    private void gInput(){
+        h = Input.GetAxis(HORIZONTAL);
+        v = Input.GetAxis(VERTICAL);
 
-    // Update is called once per frame
-    void Update()
-    {
+        breaking = Input.GetKey(KeyCode.Space);
 
-        float h = 0f;
-        float v = 0f;
 
-        //moves right
-        if(Input.GetKey(KeyCode.D)){
-            //transform.localPosition += new Vector3(2,0,0) * Time.deltaTime;
-            h = 1f;
-        }
-        
-        //moves left
-        if(Input.GetKey(KeyCode.A)){
-            //transform.localPosition += new Vector3(-2,0,0) * Time.deltaTime;
-            h = -1f;
-        }
+    }
 
-        //moves forward
-        if(Input.GetKey(KeyCode.W)){
-            //transform.localPosition += new Vector3(0,0,2) * Time.deltaTime;
-            v = 1f;
-        }
-        
-        //moves backward
-        if(Input.GetKey(KeyCode.S)){
-            //transform.localPosition += new Vector3(0,0, -2) * Time.deltaTime;
-            v = -1f;
-        }
+    private void motor(){
+        //All wheel drive
+        frontLWCollider.motorTorque = v * mForce;
+        frontRWCollider.motorTorque = v * mForce;
+        backLWCollider.motorTorque = v * mForce;
+        backRWCollider.motorTorque = v * mForce;
 
-        Vector3 mForward = camPosition.forward;
-        Vector3 mRight = camPosition.right;
+        breakingF = breaking ? bForce : 0f;
 
-        mForward.y = 0f;
-        mRight.y = 0f;
+        //if(breaking){
+            frontLWCollider.brakeTorque = breakingF;
+            frontRWCollider.brakeTorque = breakingF;
+            backLWCollider.brakeTorque = breakingF;
+            backRWCollider.brakeTorque = breakingF;
+        //}
+    }
 
-        moveDir = (mForward*v + mRight*h).normalized;
+    private void steering(){
+        currSAngle = maxSAngle * h;
+        frontLWCollider.steerAngle = currSAngle;
+        frontRWCollider.steerAngle = currSAngle;
 
-        transform.position += moveDir*7f*Time.deltaTime;
-        
+    
+
+    }
+
+    private void wheels(){
+        updateSWheel(frontLWCollider, frontLWTransform);
+        updateSWheel(frontRWCollider, frontRWTransform);
+        updateSWheel(backLWCollider, backLWTransform);
+        updateSWheel(backRWCollider, backRWTransform);
+
+    }
+
+    private void updateSWheel(WheelCollider wCollider, Transform wTransform){
+        Vector3 pos;
+        Quaternion rotate;
+
+        wCollider.GetWorldPose(out pos, out rotate);
+
+        wTransform.position = pos;
+        wTransform.rotation = rotate;
+
     }
 }
