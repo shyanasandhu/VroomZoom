@@ -120,5 +120,5 @@ AssetOrigin:
   productId: 24530
   packageName: Tileable Bricks Wall
   packageVersion: 1.0
-  assetPath: Assets/TileableBricksWall/Textures/Bricks_diffuse.TGA
+  assetPath: Assets/ImportedAssets/TileableBricksWall/Textures/Bricks_diffuse.TGA
   uploadId: 39242
