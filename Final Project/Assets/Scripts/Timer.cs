@@ -52,7 +52,7 @@ public class Timer : MonoBehaviour
 
     public void endL(){
         isRunning = false;
-        timerText.text = "LAPS FINISHED";
+        //timerText.text = "LAPS FINISHED";
     }
 
     public void recordTime(){
