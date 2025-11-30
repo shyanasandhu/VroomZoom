@@ -42,11 +42,11 @@ public class CarMovement : MonoBehaviour
 
 
     public GameObject SF;
-    public int count = 0;
+    [SerializeField] public int count = 0;
     public float delay = 5;
     public Timer timer;
     private bool lapT = false;
-
+    [SerializeField] public int laps = 0;
 
 
     private void FixedUpdate()
@@ -114,12 +114,35 @@ public class CarMovement : MonoBehaviour
         void OnTriggerEnter(Collider other){
             if(other.CompareTag("SFLine") && !lapT){
                 count++;
-                timer.recordTime();
                 lapT = true;
 
-                if(count < 5 ){
+                /*if(count == 1){
                     timer.sTimer();
-                }else if(count == 5){
+                    return;
+                }
+
+                if(count > 1 && laps < 3){
+                    timer.recordLap();
+                    timer.rTime();
+                    laps++;
+                }
+
+                if(laps == 3){
+                    StartCoroutine(RunEnd(delay));
+                    timer.endL();
+                }*/
+
+                if(laps > 0 && laps < 3){
+                        timer.recordLap();
+                    }
+
+                if(count % 2 == 0 && count < 4){
+                    timer.sTimer();
+                }else if(count % 2 == 1){
+                    laps++;
+
+                    timer.rTime();
+                }else if(count == 4){
                     StartCoroutine(RunEnd(delay));
                     timer.endL();
                 }
