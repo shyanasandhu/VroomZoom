@@ -8,26 +8,53 @@ public class DataPersistenceManager : MonoBehaviour
     public static DataPersistenceManager instance{get; private set;}
     private LapData lapData;
     private List<IDataPersistence> dataPersistenceObjects;
+    private FileDataHandler dataHandler;
+
+    [Header("File Storage Config")]
+    [SerializeField] private string fileN;
+
+
 
 
     private void Awake(){
-        instance = this;
-    }
+        if(instance != null && instance != this) {
+            Destroy(gameObject);
+            return;
+        }
 
-    public void Start(){
+        instance = this;
+        DontDestroyOnLoad(gameObject);
+
+        this.dataHandler = new FileDataHandler(Application.persistentDataPath, fileN);
         this.dataPersistenceObjects = findObjects();
+        NewGame();
         LoadGame();
     }
+
+    /*public void Start(){
+        this.dataHandler = new FileDataHandler(Application.persistentDataPath, fileN);
+        this.dataPersistenceObjects = findObjects();
+        NewGame();
+        LoadGame();
+    }*/
     
     public void NewGame(){
         this.lapData = new LapData();
     }
 
     public void LoadGame(){
+        this.lapData = dataHandler.Load();
+
+        if(lapData == null) lapData = new LapData();
+
         foreach (IDataPersistence dpObject in dataPersistenceObjects)
         {
             dpObject.LoadData(lapData);
         }
+
+        Debug.Log("load " + lapData.L1);
+        Debug.Log("load " + lapData.L2);
+        Debug.Log("load " + lapData.L3);
 
     }
 
@@ -37,9 +64,15 @@ public class DataPersistenceManager : MonoBehaviour
             dpObject.SaveData(ref lapData);
         }
 
-        Debug.Log("load " + lapData.L1);
-        Debug.Log("load " + lapData.L2);
-        Debug.Log("load " + lapData.L3);
+        dataHandler.Save(lapData);
+
+        Debug.Log("save " + lapData.L1);
+        Debug.Log("save " + lapData.L2);
+        Debug.Log("save " + lapData.L3);
+    }
+
+    public LapData GetLData(){
+        return lapData;
     }
 
     private void OnApplicationQuit(){
@@ -49,7 +82,7 @@ public class DataPersistenceManager : MonoBehaviour
     
 
     private List<IDataPersistence> findObjects(){
-        IEnumerable<IDataPersistence> dataPersistenceObjects = FindObjectsOfType<MonoBehaviour>().OfType<IDataPersistence>();
+        IEnumerable<IDataPersistence> dataPersistenceObjects = FindObjectsOfType<MonoBehaviour>(true).OfType<IDataPersistence>();
 
         return new List<IDataPersistence>(dataPersistenceObjects);
     }

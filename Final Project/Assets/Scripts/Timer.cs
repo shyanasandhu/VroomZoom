@@ -27,6 +27,9 @@ public class Timer : MonoBehaviour, IDataPersistence
     }
 
     public void LoadData(LapData data){
+        L1 = data.L1;
+        L2 = data.L2;
+        L3 = data.L3;
 
     }
 
