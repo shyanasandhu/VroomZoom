@@ -7,6 +7,8 @@ using System.Collections;
 public class Timer : MonoBehaviour, IDataPersistence
 {
     [SerializeField] private TextMeshProUGUI timerText;
+    [SerializeField] private TextMeshProUGUI updateText;
+
     private bool isRunning = false;
     private float displayTime;
     private int count = 0;
@@ -86,7 +88,7 @@ public class Timer : MonoBehaviour, IDataPersistence
 
     public void endL(){
         isRunning = false;
-        timerText.text = "LAPS FINISHED";
+        updateText.text = "LAPS FINISHED";
     }
 
     public void SaveData(ref LapData data){

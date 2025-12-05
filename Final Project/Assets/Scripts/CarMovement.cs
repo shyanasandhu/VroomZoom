@@ -81,6 +81,13 @@ public class CarMovement : MonoBehaviour
             backLWCollider.brakeTorque = breakingF;
             backRWCollider.brakeTorque = breakingF;
         //}
+
+        if(Mathf.Abs(v) > .1f){
+            AudioSource audioS = GetComponent<AudioSource>();
+            //audioS.PlayOneShot(audioS.clip);
+            audioS.Play();
+
+        }
     }
 
     private void steering(){
