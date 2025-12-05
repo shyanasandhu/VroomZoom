@@ -43,6 +43,11 @@ public class Buttons : MonoBehaviour
         SceneManager.LoadScene("WelcomePage");
     }
 
+    public void quit(){
+        Application.Quit();
+        Debug.Log("quit");
+    }
+
     private void OnApplicationQuit()
     {
         saveScene();
